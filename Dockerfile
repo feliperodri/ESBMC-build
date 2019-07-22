@@ -14,4 +14,4 @@ FROM rafaelsamenezes/esbmc-cmake:base
 ###################################
 WORKDIR /home/esbmc/
 RUN mkdir /home/esbmc/scripts
-COPY scripts/.* scripts/
+COPY ./scripts/* scripts/
