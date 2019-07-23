@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This will compile ESBMC using all sovers using python and static linking
+
 cd /home/esbmc/esbmc_src
 mkdir -p cmake-build
 mkdir -p release
