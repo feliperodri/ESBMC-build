@@ -2,6 +2,11 @@
 
 # Helper to run most used functionalities
 
+execute_esbmc_docker() {
+    docker run --user $UID --rm -it -v $(pwd):/home/esbmc/esbmc_src:Z \
+           rafaelsamenezes/esbmc-cmake:latest $1
+}
+
 parse_test_output() {
     echo ''
     echo '##############################'
@@ -26,9 +31,7 @@ build_options() {
     do
 	case $solver_selected in
 	    "All")
-                docker run --user $UID --rm -it -v $(pwd):/home/esbmc/esbmc_src:Z \
-                       rafaelsamenezes/esbmc-cmake:latest \
-                       /home/esbmc/docker-scripts/build-all-static-python.sh
+                execute_esbmc_docker /home/esbmc/docker-scripts/build-all-static-python.sh
 		exit 0;;
 
 	    "Quit")
@@ -48,16 +51,12 @@ regression_options() {
     do
 	case $solver_selected in
 	    "ESBMC")
-                docker run --user $UID --rm -it -v $(pwd):/home/esbmc/esbmc_src:Z \
-                       rafaelsamenezes/esbmc-cmake:latest \
-                       /home/esbmc/docker-scripts/regression-esbmc.sh
+                execute_esbmc_docker /home/esbmc/docker-scripts/regression-esbmc.sh
                 parse_test_output ./regression/esbmc/tests.log
 		exit 0;;
 
             "Floats")
-                docker run --user $UID --rm -it -v $(pwd):/home/esbmc/esbmc_src:Z \
-                       rafaelsamenezes/esbmc-cmake:latest \
-                       /home/esbmc/docker-scripts/regression-floats.sh
+                execute_esbmc_docker /home/esbmc/docker-scripts/regression-floats.sh
                 parse_test_output ./regression/floats/tests.log
 		exit 0;;
 
