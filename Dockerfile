@@ -14,4 +14,4 @@ FROM rafaelsamenezes/esbmc-cmake:base
 ###################################
 WORKDIR /home/esbmc/
 RUN mkdir /home/esbmc/scripts
-COPY docker-scripts/.* docker-scripts/
+COPY ./docker-scripts/.* docker-scripts/
