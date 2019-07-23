@@ -1,7 +1,7 @@
 services:
   - docker
 
-install:
+script:
   - docker build -t rafaelsamenezes/esbmc-cmake .
 
 deploy:
