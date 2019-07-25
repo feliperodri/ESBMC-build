@@ -13,7 +13,7 @@ image**
 ## Recipes
 
 ### Build ESBMC with all solvers and python using static linkage
-1. Copy `./scripts/boostrap.sh` into the esbmc folder.
+1. Copy `scripts/boostrap.sh` into the esbmc folder.
 1. Go to to the esbmc folder.
 1. Run `bootstrap.sh`
 1. Press 1 and then 6.
@@ -22,7 +22,7 @@ image**
 ### Execute Regression
 0. Build esbmc using the previous recipe or put an ESBMC build inside the
    release folder in the esbmc root directory.
-0. Copy `./scripts/boostrap.sh` into the esbmc folder.
+0. Copy `scripts/boostrap.sh` into the esbmc folder.
 0. Go to to the esbmc folder.
 0. Run `bootstrap.sh`
 0. Press 2 and then select which regression do you want to use.
@@ -32,8 +32,8 @@ image**
 ### Execute TestComp'19 benchmark
 0. Build esbmc using the previous recipe or put an ESBMC build inside the
    release folder in the esbmc root directory.
-0. Copy `./scripts/boostrap.sh` into the esbmc folder.
-0. *Optional: Copy `./scripts/esbmc-def.xml`  and `./scripts/esbmc-wrapper.py` 
+0. Copy `scripts/boostrap.sh` into the esbmc folder.
+0. *Optional: Copy `scripts/esbmc-def.xml`  and `scripts/esbmc-wrapper.py` 
   into the esbmc folder. This step should only be done if you are testing if everything
   is working or if you want to run a custom configuration e.g setting different categories*
 0. Go to to the esbmc folder.
