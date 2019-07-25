@@ -10,13 +10,6 @@
 FROM rafaelsamenezes/esbmc-cmake:base
 
 ###################################
-# COPY
-###################################
-WORKDIR /home/esbmc/
-RUN mkdir /home/esbmc/scripts
-COPY ./docker-scripts/* docker-scripts/
-
-###################################
 # Benchexec
 ###################################
 USER root
@@ -25,3 +18,12 @@ RUN apt-get update \
         && apt install -y --install-recommends ./benchexec_*.deb \
         && rm benchexec_*.deb && adduser esbmc benchexec \
         && rm -rf /var/lib/apt/lists/*
+
+
+###################################
+# COPY
+###################################
+USER esbmc
+WORKDIR /home/esbmc/
+RUN mkdir /home/esbmc/scripts
+COPY ./docker-scripts/* docker-scripts/
