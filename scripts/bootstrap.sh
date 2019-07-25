@@ -2,9 +2,17 @@
 
 # Helper to run most used functionalities
 
+docker_message() {
+    echo "To check the content of the docker run: docker logs -f $1"
+    echo "NOTE: You can check all containers running using: docker ps"
+}
+
 execute_esbmc_docker() {
-    docker run --user $UID --rm -it -v $(pwd):/home/esbmc/esbmc_src:Z \
-           rafaelsamenezes/esbmc-cmake:latest $1
+    docker_id=`docker run -d --user $UID --rm -it -v $(pwd):/home/esbmc/esbmc_src:Z \
+           -e http_proxy=$http_proxy \
+           -e https_proxy=$https_proxy \
+           rafaelsamenezes/esbmc-cmake:latest $1`
+    docker_message $docker_id
 }
 
 execute_esbmc_docker_privileged() {
@@ -14,28 +22,17 @@ execute_esbmc_docker_privileged() {
 
     echo "Type the quantity of threads to be used, followed by [ENTER]:"
     read threads
-    docker run  \
+
+    docker_id=`docker run -d \
            -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
+           -e http_proxy=$http_proxy \
+           -e https_proxy=$https_proxy \
            --privileged --rm -it -v $(pwd):/home/esbmc/esbmc_src:Z \
            --memory="${memory_limit}g" --memory-swap="${memory_limit}g" \
-           rafaelsamenezes/esbmc-cmake:latest $1 $((memory_limit / threads)) $threads
+           rafaelsamenezes/esbmc-cmake:latest $1 $((memory_limit / threads)) $threads`
+    docker_message $docker_id
 }
 
-parse_test_output() {
-    echo ''
-    echo '##############################'
-    echo '# SUMMARY - Results          #'
-    echo '##############################'
-
-    success_ok=`cat $1 | grep '\^VERIFICATION SUCCESSFUL\$ \[OK\]' | wc -l`
-    success_failed=`cat $1 | grep '\^VERIFICATION SUCCESSFUL\$ \[FAILED\]' | wc -l`
-    failed_ok=`cat $1 | grep '\^VERIFICATION FAILED\$ \[OK\]' | wc -l`
-    failed_failed=`cat $1 | grep '\^VERIFICATION FAILED\$ \[FAILED\]' | wc -l`
-    echo "# Success OK: $success_ok"
-    echo "# Success FAILED: $success_failed"
-    echo "# Failed OK: $failed_ok"
-    echo "# Failed FAILED: $failed_failed"
-}
 
 build_options() {
     echo ""
@@ -66,12 +63,10 @@ regression_options() {
 	case $solver_selected in
 	    "ESBMC")
                 execute_esbmc_docker /home/esbmc/docker-scripts/regression-esbmc.sh
-                parse_test_output ./regression/esbmc/tests.log
 		exit 0;;
 
             "Floats")
                 execute_esbmc_docker /home/esbmc/docker-scripts/regression-floats.sh
-                parse_test_output ./regression/floats/tests.log
 		exit 0;;
 
 	    "Quit") exit 0;;
@@ -79,6 +74,7 @@ regression_options() {
 	    *) echo "Invalid Option :(";;
 	esac
     done
+    echo "When finished it will create a summary.log in the regression directory"
 }
 
 benchexec_options() {
