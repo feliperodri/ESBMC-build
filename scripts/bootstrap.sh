@@ -8,11 +8,11 @@ docker_message() {
 }
 
 execute_esbmc_docker() {
-    docker_id=`docker run -d --user $UID --rm -it -v $(pwd):/home/esbmc/esbmc_src:Z \
+    docker run --user $UID --rm -it -v $(pwd):/home/esbmc/esbmc_src:Z \
            -e http_proxy=$http_proxy \
            -e https_proxy=$https_proxy \
-           rafaelsamenezes/esbmc-cmake:latest $1`
-    docker_message $docker_id
+           rafaelsamenezes/esbmc-cmake:latest $1
+
 }
 
 execute_esbmc_docker_privileged() {
@@ -37,12 +37,15 @@ execute_esbmc_docker_privileged() {
 build_options() {
     echo ""
     echo "Ok. Which solver do you want to use?"
-    solver_options=("Boolector" "Z3" "Yices" "MathSat" "CVC4" "All" "Quit")
+    solver_options=("Boolector" "Z3" "Yices" "MathSat" "CVC4" "All" "All Autoconf" "Quit")
     select solver_selected in "${solver_options[@]}"
     do
 	case $solver_selected in
 	    "All")
                 execute_esbmc_docker /home/esbmc/docker-scripts/build-all-static-python.sh
+		exit 0;;
+            "All Autoconf")
+                execute_esbmc_docker /home/esbmc/docker-scripts/build-all-autoconf.sh
 		exit 0;;
 
 	    "Quit")

@@ -3,14 +3,14 @@
 # This will configure an environment similar to the used in the TestComp'19
 cd /home/esbmc/esbmc_src
 
-if [ ! -d sv-benchmarks ]; then
+if [ ! -d testcomp-benchmarks ]; then
   wget https://github.com/sosy-lab/sv-benchmarks/archive/testcomp19.tar.gz -O testcomp19.tar.gz
   tar xf testcomp19.tar.gz
   rm testcomp19.tar.gz
-  mv sv-benchmarks-testcomp19 sv-benchmarks
+  mv sv-benchmarks-testcomp19 testcomp-benchmarks
 fi
 
-cd sv-benchmarks
+cd testcomp-benchmarks
 
 if [ ! -d benchmark ]; then
     mkdir benchmark
@@ -22,6 +22,20 @@ if [ ! -f ../esbmc-def.xml ]; then
 else
     cp ../esbmc-def.xml .
 fi
+
+if [ ! -f ../tbf-def.xml ]; then
+    wget https://gitlab.com/sosy-lab/test-comp/bench-defs/raw/master/benchmark-defs/tbf-testsuite-validator.xml \
+         -O tbf-def.xml
+else
+    cp ../tbf-def.xml .
+fi
+
+
+if [ ! -d ./tbf-test ]; then
+    wget https://raw.githubusercontent.com/sosy-lab/benchexec/master/benchexec/tools/tbf.py \
+         -O tbf.py
+else
+
 
 cp ../esbmc-wrapper.py .
 cp ../release/esbmc .
@@ -37,4 +51,4 @@ benchexec ./esbmc-def.xml \
 
 table-generator '/home/esbmc/esbmc_src/testcomp/output.*.xml.bz2'
 
-chmod -R a+rwX /home/esbmc/esbmc_src/testcomp/
+chmod -R a+rwX /home/esbmc/esbmc_src/testcomp
