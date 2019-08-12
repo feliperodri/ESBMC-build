@@ -1,0 +1,16 @@
+---
+- hosts: kubernete_master
+  become: yes
+  become_user: esbmc
+  tasks:
+   - name: Start Jenkins
+     docker_container:
+      name: jenkins
+      image: jenkinsci/blueocean
+      auto_remove: true
+      ports:
+        - "50000:50000"
+        - "8080:8080"
+      volumes:
+        - "jenkins-data:/var/jenkins_home"
+        - "/var/run/docker.sock:/var/run/docker.sock"

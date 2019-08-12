@@ -1,0 +1,11 @@
+###################################
+# START
+###################################
+FROM rafaelsamenezes/esbmc-cmake
+
+###################################
+# BENCHEXEC
+###################################
+RUN pip3 install --user benchexec coloredlogs
+ENV PATH=/home/esbmc/.local/bin:$PATH
+RUN wget https://raw.githubusercontent.com/sosy-lab/benchexec/master/benchexec/tools/esbmc.py

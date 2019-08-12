@@ -1,0 +1,6 @@
+[kubernete_master]
+master-kubernete ansible_host=192.168.122.130
+
+[kubernete_slave]
+slave-1 ansible_host=192.168.122.184
+slave-2 ansible_host=192.168.122.82

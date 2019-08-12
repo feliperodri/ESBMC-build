@@ -1,0 +1,34 @@
+---
+- hosts: kubernete_master
+  environment:
+    http_proxy: "{{http_proxy}}"
+    https_proxy: "{{https_proxy}}"
+  become: yes
+  tasks:
+    - name: initialize the cluster
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16
+      
+    - name: create .kube directory
+      become: yes
+      become_user: esbmc
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: copy admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/esbmc/.kube/config
+        remote_src: yes
+        owner: esbmc
+
+    - name: install Pod network
+      become: yes
+      become_user: esbmc
+      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml
+      register: result
+
+    - name: debug pod network
+      debug:
+        var: result

@@ -1,47 +1,54 @@
-[![Build Status](https://travis-ci.com/rafaelsamenezes/ESBMC-build.svg?branch=master)](https://travis-ci.com/rafaelsamenezes/ESBMC-build)
+# ESBMC - Cluster Architecture
 
-# ESBMC-build
-This is a Docker environment to help build ESBMC, run regressions and run benchmarks. This is still a WIP, if you have any problems please file an issue!
+This document will explain the architecture and providing an
+summary and base on the technologies used.
 
-**ATENTION: Always run `docker pull rafaelsamenezes/esbmc-cmake` any time this repository changes so that you have the latest
-image**
+## Overview
 
-## Prerequisites
-- Docker
-- ESBMC repo in the cmake branch
+### Ansible
 
-## Recipes
+### Docker
 
-### Build ESBMC with all solvers and python using static linkage
-1. Copy `scripts/boostrap.sh` into the esbmc folder.
-1. Go to to the esbmc folder.
-1. Run `bootstrap.sh`
-1. Press 1 and then 6.
-1. The builded file will be located inside the `release` folder
+### Kubernetes
 
-### Execute Regression
-0. Build esbmc using the previous recipe or put an ESBMC build inside the
-   release folder in the esbmc root directory.
-0. Copy `scripts/boostrap.sh` into the esbmc folder.
-0. Go to to the esbmc folder.
-0. Run `bootstrap.sh`
-0. Press 2 and then select which regression do you want to use.
-0. At the end of the execution a summary will be shown, and the tests.log file
-  will be generated inside the regression folder.
+### Jenkins
 
-### Execute TestComp'19 benchmark
-0. Build esbmc using the previous recipe or put an ESBMC build inside the
-   release folder in the esbmc root directory.
-0. Copy `scripts/boostrap.sh` into the esbmc folder.
-0. *Optional: Copy `scripts/esbmc-def.xml`  and `scripts/esbmc-wrapper.py` 
-  into the esbmc folder. This step should only be done if you are testing if everything
-  is working or if you want to run a custom configuration e.g setting different categories*
-0. Go to to the esbmc folder.
-0. Run `bootstrap.sh`
-0. Press 3 and then 1.
-0. When asked about how much RAM do you want to give to the machine, think about how many threads
-  do you want, and multiply it by the quantity of RAM that you'd like per thread. Example: To run 8 threads
-  with 16GB each you should put 128.
-0. Put how many threads will be used
-0. The report will be inside the esbmc root folder inside the folder `testcomp`
+## Instructions
 
+### Prerequisites
+
+Edit `/etc/hosts` so it contains all servers named as master and slave-$:
+
+```bash
+cat /etc/hosts
+
+192.168.2.1 master
+192.168.2.2 slave-1
+192.168.2.3 slave-2
+192.168.2.3 slave-3
+```
+
+Configure ssh with keys (assuming all machines have the same username as the host):
+
+```bash
+ssh-keygen
+ssh-copy-id master
+ssh-copy-id slave-1
+ssh-copy-id slave-2
+ssh-copy-id slave-3
+```
+
+Edit `env_variables` variables
+
+Execute `root.sh` as a priviliged user:
+
+```bash
+chmod +x ./root.sh
+sudo ./root.sh
+```
+
+Before proceding **ensure** that the following command results in SUCCESS for all slaves and master.
+
+```bash
+ansible all -m ping
+```

@@ -1,0 +1,3 @@
+---
+- import_playbook: jenkins/prerequisites.yml
+- import_playbook: jenkins/start.yml
