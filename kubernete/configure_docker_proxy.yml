@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: true
+  environment:
+    http_proxy: "{{http_proxy}}"
+    https_proxy: "{{https_proxy}}"
+  tasks:
+
+    - name: Create directory to manage docker systemd modules
+      file:
+        path: /etc/systemd/system/docker.service.d
+        state: directory
+
+    - name: Create systemd docker module for HTTP-Proxy
+      copy: 
+        content: "[Service]\n\"Environment=HTTP_PROXY={{ http_proxy }}\""
+        dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+      when: http_proxy != ''
+
+    - name: Create systemd docker module for HTTPS-Proxy
+      copy: 
+        content: "[Service]\n\"Environment=HTTPS_PROXY={{ https_proxy }}\""
+        dest: /etc/systemd/system/docker.service.d/https-proxy.conf
+      when: https_proxy != ''
+
+    - name: Daemon reload for docker
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: docker

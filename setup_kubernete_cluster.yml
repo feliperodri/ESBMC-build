@@ -1,5 +1,6 @@
 ---
 - import_playbook: kubernete/prerequisites.yml
 - import_playbook: kubernete/setup_nodes.yml
+- import_playbook: kubernete/configure_docker_proxy.yml
 - import_playbook: kubernete/configure_kubernete_master.yml
 - import_playbook: kubernete/configure_kubernete_slave.yml

@@ -1,4 +1,13 @@
-http_proxy: ''
-https_proxy: ''
-http_proxy_example: 'http://proxy.bos.example.com:8080'
-https_proxy_example: 'http://proxy.bos.example.com:8080'
+http_proxy: 'http://192.168.122.128:3128'
+https_proxy: 'http://192.168.122.128:3128'
+
+lan_range: '192.168.122.{1..253}'
+
+ports:
+- "6443/tcp"
+- "10250/tcp"
+- "443/tcp"
+- "443/udp"
+- "80/tcp"
+- "80/udp"
+- "8080/tcp"

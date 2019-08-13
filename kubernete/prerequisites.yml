@@ -28,3 +28,4 @@
         path: /etc/fstab
         regexp: '^(.+?\sswap\s+sw\s+.*)$'
         replace: '# \1'
+

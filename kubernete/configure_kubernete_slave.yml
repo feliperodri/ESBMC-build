@@ -1,8 +1,5 @@
 ---
 - hosts: kubernete_master
-  environment:
-    http_proxy: "{{http_proxy}}"
-    https_proxy: "{{https_proxy}}"
   become: yes
   gather_facts: false
   tasks:
@@ -16,15 +13,19 @@
 
 - hosts: kubernete_slave
   environment:
-    http_proxy: "{{http_proxy}}"
-    https_proxy: "{{https_proxy}}"
   become: yes
   tasks:
 
+    - name: Generate no_proxy
+      shell: |
+        printf -v lan '%s,' {{ lan_range }}
+        printf -v pool '%s,' 10.244.0.{1..253}
+        printf -v service '%s,' 10.96.0.{1..253}
+        echo "${lan%,},${service%,},${pool%,},127.0.0.1"
+      register: no_proxy_value     
+
     - name: join cluster
+      environment:
+        no_proxy: "{{ no_proxy_value }}"
       shell: "{{ hostvars['master-kubernete'].join_command }}"
       register: result
-
-    - name: debug join cluster command
-      debug:
-        var: result

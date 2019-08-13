@@ -1,11 +1,22 @@
 ---
 - hosts: kubernete_master
+  become: true
   environment:
     http_proxy: "{{http_proxy}}"
     https_proxy: "{{https_proxy}}"
-  become: yes
-  tasks:
+  tasks:    
+
+    - name: Generate no_proxy
+      shell: |
+        printf -v lan '%s,' {{ lan_range }}
+        printf -v pool '%s,' 10.244.0.{1..253}
+        printf -v service '%s,' 10.96.0.{1..253}
+        echo "${lan%,},${service%,},${pool%,},127.0.0.1"
+      register: no_proxy_value        
+
     - name: initialize the cluster
+      environment:
+        no_proxy: "{{ no_proxy_value }}"
       shell: kubeadm init --pod-network-cidr=10.244.0.0/16
       
     - name: create .kube directory
@@ -26,9 +37,7 @@
     - name: install Pod network
       become: yes
       become_user: esbmc
+      environment:
+        no_proxy: "{{ no_proxy_value }}"
       shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml
       register: result
-
-    - name: debug pod network
-      debug:
-        var: result

@@ -17,15 +17,17 @@ summary and base on the technologies used.
 
 ### Prerequisites
 
-Edit `/etc/hosts` so it contains all servers named as master and slave-$:
+Edit `/hosts` so it contains all servers named as master and slave-$:
 
 ```bash
 cat /etc/hosts
 
-192.168.2.1 master
-192.168.2.2 slave-1
-192.168.2.3 slave-2
-192.168.2.3 slave-3
+[kubernete_master]
+master-kubernete ansible_host=192.168.122.130
+
+[kubernete_slave]
+slave-1 ansible_host=192.168.122.184
+slave-2 ansible_host=192.168.122.82
 ```
 
 Configure ssh with keys (assuming all machines have the same username as the host):
