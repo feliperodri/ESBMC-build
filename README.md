@@ -54,7 +54,7 @@ sudo ./root.sh
 Before proceding **ensure** that the following command results in SUCCESS for all slaves and master:
 
 ```bash
-ansible all -m ping
+ansible -i hosts all -m ping
 ```
 NOTE: When asked about **become**, is your **sudo** password.
 
