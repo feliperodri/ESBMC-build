@@ -19,7 +19,7 @@ summary and base on the technologies used.
 
 SSH into the master host
 
-Edit `./hosts` so it contains all hosts in the correct category:
+Replace values in `./hosts` so it contains all hosts in the correct category:
 
 ```bash
 cat hosts
@@ -41,7 +41,7 @@ ssh-copy-id 192.168.122.184
 ssh-copy-id 192.168.122.82
 ```
 
-Edit `./group_vars/all` variables (`lan_range` should the hosts network), e.g
+Edit `./group_vars/all` variables (`lan_range` should be the hosts network), e.g
 my machines are all located in 192.168.122.* so I used 192.168.122.{1..253}
 
 Execute `root.sh` as a priviliged user, this will install ansible:
