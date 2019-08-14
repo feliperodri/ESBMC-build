@@ -17,10 +17,12 @@ summary and base on the technologies used.
 
 ### Prerequisites
 
-Edit `/hosts` so it contains all servers named as master and slave-$:
+SSH into the master host
+
+Edit `./hosts` so it contains all hosts in the correct category:
 
 ```bash
-cat /etc/hosts
+cat hosts
 
 [kubernete_master]
 master-kubernete ansible_host=192.168.122.130
@@ -30,27 +32,52 @@ slave-1 ansible_host=192.168.122.184
 slave-2 ansible_host=192.168.122.82
 ```
 
-Configure ssh with keys (assuming all machines have the same username as the host):
+Configure ssh with keys from master:
 
 ```bash
 ssh-keygen
-ssh-copy-id master
-ssh-copy-id slave-1
-ssh-copy-id slave-2
-ssh-copy-id slave-3
+ssh-copy-id 192.168.122.130
+ssh-copy-id 192.168.122.184
+ssh-copy-id 192.168.122.82
 ```
 
-Edit `env_variables` variables
+Edit `./group_vars/all` variables (`lan_range` should the hosts network), e.g
+my machines are all located in 192.168.122.* so I used 192.168.122.{1..253}
 
-Execute `root.sh` as a priviliged user:
+Execute `root.sh` as a priviliged user, this will install ansible:
 
 ```bash
 chmod +x ./root.sh
 sudo ./root.sh
 ```
 
-Before proceding **ensure** that the following command results in SUCCESS for all slaves and master.
+Before proceding **ensure** that the following command results in SUCCESS for all slaves and master:
 
 ```bash
 ansible all -m ping
 ```
+NOTE: When asked about **become**, is your **sudo** password.
+
+### Kubernete Cluster
+
+To set-up the cluster, run:
+
+```bash
+`./run-playbook.sh setup_kubernete_cluster.yml
+```
+
+To check, ssh into esbmc@localhost (in the master) and run `kubectl get nodes`
+
+### Jenkins
+
+To set-up the jenkins, run:
+
+```bash
+`./run-playbook.sh setup_kubernete_cluster.ymsetup_jenkins.yml
+```
+
+This will start the process to download the jenkins image with a load balancer, to check in which port it is running:
+
+ssh into esbmc@localhost and run `kubectl get services`, the `jenkins` service will map port 8080 to another port which is
+what is used to access jenkins
+
