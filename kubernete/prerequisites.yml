@@ -2,9 +2,7 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Change hostname since kubernetes doesn't work with same hostnames
-      shell: "hostnamectl set-hostname {{inventory_hostname}}"
-
+    
     - name: Create the 'esbmc' user
       user: name=esbmc append=yes state=present createhome=yes shell=/bin/bash
 
@@ -28,4 +26,17 @@
         path: /etc/fstab
         regexp: '^(.+?\sswap\s+sw\s+.*)$'
         replace: '# \1'
+  
+    - name: Start service Firewalld
+      service:
+        name: firewalld
+        state: started
+
+    - name: Allow Network Ports in Firewalld
+      firewalld:
+        port: "{{ item }}"
+        state: enabled
+        permanent: yes
+        immediate: yes
+      with_items: "{{ ports }}"
 

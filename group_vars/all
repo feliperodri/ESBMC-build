@@ -6,8 +6,8 @@ lan_range: '192.168.122.{1..253}'
 ports:
 - "6443/tcp"
 - "10250/tcp"
-- "443/tcp"
-- "443/udp"
-- "80/tcp"
-- "80/udp"
+
+ports_jenkins:
 - "8080/tcp"
+- "31704/tcp"
+- "50000/tcp"

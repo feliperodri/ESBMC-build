@@ -19,19 +19,6 @@
         enabled: yes
         state: started
 
-    - name: Stop service firewalld, if started
-      service:
-        name: firewalld
-        state: stopped
-
-    # - name: Allow Network Ports in Firewalld
-    #   firewalld:
-    #     port: "{{ item }}"
-    #     state: enabled
-    #     permanent: yes
-    #     immediate: yes
-    #   with_items: "{{ ports }}"
-
     - name: Disable SELinux
       command: setenforce 0
 

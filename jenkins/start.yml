@@ -7,6 +7,14 @@
   become: yes  
   tasks:
 
+  - name: Allow Network Ports in Firewalld
+    firewalld:
+      port: "{{ item }}"
+      state: enabled
+      permanent: yes
+      immediate: yes
+    with_items: "{{ ports_jenkins }}"
+
   - name: Copy jenkins-deployment.yml to esbmc user
     copy:
       src: "{{ playbook_dir }}/jenkins-deployment.yml"
@@ -35,8 +43,11 @@
         no_proxy: "{{ no_proxy_value }}"
     shell: kubectl create -f $HOME/jenkins-deployment.yml
 
-  - name: Start jenkins load balancer    
+  - name: Start jenkins    
     become_user: esbmc
     environment:
         no_proxy: "{{ no_proxy_value }}"
     shell: kubectl create -f $HOME/jenkins-service.yml
+
+
+  
