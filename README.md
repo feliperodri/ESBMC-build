@@ -68,16 +68,3 @@ To set-up the cluster, run:
 
 To check, ssh into esbmc@localhost (in the master) and run `kubectl get nodes`
 
-### Jenkins
-
-To set-up the jenkins, run:
-
-```bash
-`./run-playbook.sh setup_kubernete_cluster.ymsetup_jenkins.yml
-```
-
-This will start the process to download the jenkins image with a load balancer, to check in which port it is running:
-
-ssh into esbmc@localhost and run `kubectl get services`, the `jenkins` service will map port 8080 to another port which is
-what is used to access jenkins
-
