@@ -1,5 +1,5 @@
-http_proxy: 'http://192.168.122.128:3128'
-https_proxy: 'http://192.168.122.128:3128'
+http_proxy: ''
+https_proxy: ''
 
 lan_range: '192.168.122.{1..253}'
 
@@ -9,5 +9,4 @@ ports:
 
 ports_jenkins:
 - "8080/tcp"
-- "31704/tcp"
 - "50000/tcp"

@@ -1,53 +1,35 @@
 ---
-
 - hosts: kubernete_master
-  environment:
-    http_proxy: "{{http_proxy}}"
-    https_proxy: "{{https_proxy}}"
-  become: yes  
+  become: true
   tasks:
-
-  - name: Allow Network Ports in Firewalld
-    firewalld:
-      port: "{{ item }}"
-      state: enabled
-      permanent: yes
-      immediate: yes
-    with_items: "{{ ports_jenkins }}"
-
-  - name: Copy jenkins-deployment.yml to esbmc user
-    copy:
-      src: "{{ playbook_dir }}/jenkins-deployment.yml"
-      dest: /home/esbmc/jenkins-deployment.yml
-      remote_src: yes
-      owner: esbmc
-
-  - name: Copy jenkins-service.yml to esbmc user
-    copy:
-      src: "{{ playbook_dir }}/jenkins-service.yml"
-      dest: /home/esbmc/jenkins-service.yml
-      remote_src: yes
-      owner: esbmc
-
-  - name: Generate no_proxy
-    shell: |
-      printf -v lan '%s,' {{ lan_range }}
-      printf -v pool '%s,' 10.244.0.{1..253}
-      printf -v service '%s,' 10.96.0.{1..253}
-      echo "${lan%,},${service%,},${pool%,},127.0.0.1"
-    register: no_proxy_value       
-
-  - name: Start jenkins    
-    become_user: esbmc
-    environment:
-        no_proxy: "{{ no_proxy_value }}"
-    shell: kubectl create -f $HOME/jenkins-deployment.yml
-
-  - name: Start jenkins    
-    become_user: esbmc
-    environment:
-        no_proxy: "{{ no_proxy_value }}"
-    shell: kubectl create -f $HOME/jenkins-service.yml
-
-
-  
+    - name: Ensure java8 is Installed
+      yum:
+        name: java-1.8.0-openjdk-devel
+        state: present
+        update_cache: yes
+    - name: Ensure Jenkins Repository is Installed
+      yum_repository:
+        name: jenkins
+        state: present
+        description: Official Jenkins Yum Repo
+        baseurl: http://pkg.jenkins.io/redhat
+        gpgkey: https://jenkins-ci.org/redhat/jenkins-ci.org.key
+        gpgcheck: yes
+        enabled: yes
+    - name: Ensure Jenkins is Installed
+      yum :
+        name: jenkins
+        update_cache: yes
+        state: present
+    - name: Enable and Start the Jenkins Service
+      service:
+        name: jenkins
+        enabled: yes
+        state: started
+    - name: Open Firewall Port
+      firewalld:
+        zone: public
+        port: 8080/tcp
+        permanent: true
+        state: enabled
+        immediate: true

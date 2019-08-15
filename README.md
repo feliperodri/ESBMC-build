@@ -63,8 +63,17 @@ NOTE: When asked about **become**, is your **sudo** password.
 To set-up the cluster, run:
 
 ```bash
-`./run-playbook.sh setup_kubernete_cluster.yml
+./run-playbook.sh setup_kubernete_cluster.yml
 ```
 
 To check, ssh into esbmc@localhost (in the master) and run `kubectl get nodes`
 
+### Jenkins
+
+To set-up jenkins, run:
+
+```bash
+./run-playbook.sh setup_jenkins.yml
+```
+
+Then, access `http://<master_kubernetes>:8080`
