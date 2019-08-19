@@ -1,6 +1,9 @@
 ---
 - hosts: kubernete_master
   become: true
+  environment:
+    http_proxy: "{{http_proxy}}"
+    https_proxy: "{{https_proxy}}"
   tasks:
     - name: Ensure java8 is Installed
       yum:
