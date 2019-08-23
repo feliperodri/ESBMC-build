@@ -1,23 +1,20 @@
 # ESBMC - Cluster Architecture
 
 This document will explain the architecture and providing an
-summary and base on the technologies used.
+summary and base on the technologies used. This assumes that 
+all machines are using CentOS or RHEL
 
 ## Overview
 
-### Ansible
-
-### Docker
-
-### Kubernetes
-
-### Jenkins
+![Overview image](./doc/overview.png)
 
 ## Instructions
 
 ### Prerequisites
 
-SSH into the master host
+- Get the openvpn configuration file (ask it)
+
+- SSH into the master host
 
 Replace values in `./hosts` so it contains all hosts in the correct category:
 
@@ -32,7 +29,7 @@ slave-1 ansible_host=192.168.122.184
 slave-2 ansible_host=192.168.122.82
 ```
 
-Configure ssh with keys from master:
+- Configure ssh with keys from master:
 
 ```bash
 ssh-keygen
@@ -41,17 +38,17 @@ ssh-copy-id 192.168.122.184
 ssh-copy-id 192.168.122.82
 ```
 
-Edit `./group_vars/all` variables (`lan_range` should be the hosts network), e.g
+- Edit `./group_vars/all` variables (`lan_range` should be the hosts network), e.g
 my machines are all located in 192.168.122.* so I used 192.168.122.{1..253}
 
-Execute `root.sh` as a priviliged user, this will install ansible:
+- Execute `root.sh` as a priviliged user, this will install ansible:
 
 ```bash
 chmod +x ./root.sh
 sudo ./root.sh
 ```
 
-Before proceding **ensure** that the following command results in SUCCESS for all slaves and master:
+- Before proceding **ensure** that the following command results in SUCCESS for all slaves and master:
 
 ```bash
 ansible -i hosts all -m ping
@@ -60,7 +57,7 @@ NOTE: When asked about **become**, is your **sudo** password.
 
 ### Kubernete Cluster
 
-To set-up the cluster, run:
+- To set-up the cluster, run:
 
 ```bash
 ./run-playbook.sh setup_kubernete_cluster.yml
@@ -70,10 +67,27 @@ To check, ssh into esbmc@localhost (in the master) and run `kubectl get nodes`
 
 ### Jenkins
 
-To set-up jenkins, run:
+- This assumes that kubernetes is up and running
+
+- To set-up jenkins, run:
 
 ```bash
 ./run-playbook.sh setup_jenkins.yml
 ```
 
 Then, access `http://<master_kubernetes>:8080`
+
+NOTE: This will create `certfiles` folder inside `jenkins` this will be used later!
+
+### OpenVPN
+
+- First, put the `cluster.conf` file inside the `files` directory
+
+- Run:
+```bash
+./run-playbook.sh setup_openvpn.yml
+```
+
+## TODO
+
+- [ ] Automate cloud configuration
