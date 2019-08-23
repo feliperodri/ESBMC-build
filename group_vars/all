@@ -1,6 +1,9 @@
 http_proxy: 'http://192.168.122.128:3128'
 https_proxy: ''
 
+#The passwd CANNOT be empty!
+certificate_passwd: '123456'
+
 lan_master: '192.168.122.130'
 lan_range: '192.168.122.{2..253}'
 

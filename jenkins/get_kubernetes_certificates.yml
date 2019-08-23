@@ -36,7 +36,7 @@
       args:
         chdir: /home/esbmc
       shell: |
-        openssl  pkcs12 -export -out cert.pfx -inkey client.key -in client.crt -certfile ca.crt -password pass:
+        openssl pkcs12 -export -out cert.pfx -inkey client.key -in client.crt -certfile ca.crt -password pass:{{ certificate_passwd }}
         
     - name: Copying cert pfx file
       become: yes
