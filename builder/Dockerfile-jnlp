@@ -1,0 +1,94 @@
+###################################
+# NOTES
+###################################
+
+# This docker environment will be used as a base to build ESBMC in static mode with python
+# It currently works by providing an ubuntu 18.04 environment with the following tools:
+
+# - Clang 7
+# - CVC4
+# - Yices
+# - Z3
+# - Boolector
+# - Mathsat
+
+# All solvers are compiled statically
+
+# I am removing libgomp.so only because autoconf told me to do it. So... why?
+
+###################################
+# TODO
+###################################
+
+# Reduce image size
+# - This really should use a multi-stage build
+# - Maybe use alpine instead of ubuntu to reduce size. Also, if it works on alpine
+#   it WILL work on any *nix
+
+# DockerHub
+# - After this dockerfile is ready, we should send to dockerhub as the supported
+#   version (and update it with time)
+
+###################################
+# START
+###################################
+FROM jenkins/jnlp-slave
+
+###################################
+# ROOT
+###################################
+USER root
+# Core Packages
+RUN apt-get update && apt-get install --no-install-recommends  -y  \
+    git \
+    build-essential \
+    wget \
+    bison \
+    flex \
+    unzip \
+    gcc-multilib \
+    linux-libc-dev \
+    libzip-dev \
+    libtinfo-dev \
+    libxml2-dev \
+    libboost-all-dev \
+    automake \
+    pkg-config \
+    libtool \
+# CMake Packages
+    cmake ninja-build \
+    gperf libgmp-dev \
+    openjdk-8-jdk \ 
+    ccache \ 
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* 
+
+
+# Download Clang 7
+WORKDIR /usr/local/opt
+RUN wget http://releases.llvm.org/7.0.1/clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-18.04.tar.xz \
+    -O clang.tar.xz && tar xf clang.tar.xz && rm clang.tar.xz && mv clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-18.04 clang7 && rm ./clang7/lib/libgomp.so
+ENV CLANG_HOME=/usr/local/opt/clang7
+
+###################################
+# jenkins user
+###################################
+USER jenkins
+
+##################################
+# Building all solvers
+##################################
+COPY ./download_all_solvers.sh ./download_all_solvers.sh
+RUN ./download_all_solvers.sh
+
+##################################
+# ENV Vars
+##################################
+ENV BTOR_DIR=/home/jenkins/boolector
+ENV Z3_DIR=/home/jenkins/z3
+ENV MATHSAT_DIR=/home/jenkins/mathsat-5.5.4-linux-x86_64
+ENV YICES_DIR=/home/jenkins/yices
+ENV CVC4_DIR=/home/jenkins/cvc4
+
+# Execute jenkins-slave
+ENTRYPOINT ["/usr/local/bin/jenkins-slave"]
