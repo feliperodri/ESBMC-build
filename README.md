@@ -115,13 +115,13 @@ Dashboard for Blue Ocean", "Kubernetes"
 1. Go to Manage Jenkins -> Configure System
 1. Set "# of executors" to 0
 1. At the bottom, in the "Cloud", click on "Add a new cloud"
-1. Kubernetes URL: https://<master-ip>:6443
+1. Kubernetes URL: https://**master-ip**:6443
 1. Kubernetes server certificate key: Copy the contents from `./jenkins/certfiles/ca.crt`
 1. Kubernetes Namespace: default
 1. In Credential, click in Add -> Jenkins
 1. In Kind, set Certificate and upload ./jenkins/certfiles/cert.pfx`, in password put the value inside `group_vars/all` 
 1. Now, in Credential put the certificate. Click in "Test Connection", it should run successfully
-1. In Jenkins URL, put the http://<master-ip>:8080
+1. In Jenkins URL, put the http://**master-ip**:8080
 1. Now, let all values default, until Images. Click in Add Pod Template.
 1. Name: jnlp slave
 1. Namespace: default
@@ -135,7 +135,21 @@ Dashboard for Blue Ocean", "Kubernetes"
 1. Save
 1. Go to Manage Jenkins -> Configure Global Security
 1. TCP port for inbound agents: Fixed: 50000
-  
+ 
+#### GitHub Configuration
+To add a GitHub repository:
+
+1. Go to "Open Blue Ocean"
+2. Click in "New Pipeline"
+3. Follow the guide to add the repo
+
+Now go to your repository in GitHub
+1. Click in Settings -> Webhooks
+1. Payload URL: https://reverse-proxy.com/github-webhook
+1. Content type: application/json
+1. Enable SSL Verification
+1. Send me everything
+
 ## TODO
 
 - [ ] Automate cloud configuration
