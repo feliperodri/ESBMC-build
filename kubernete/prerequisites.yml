@@ -27,16 +27,7 @@
         regexp: '^(.+?\sswap\s+sw\s+.*)$'
         replace: '# \1'
   
-    - name: Start service Firewalld
+    - name: Stop service Firewalld
       service:
         name: firewalld
-        state: started
-
-    - name: Allow Network Ports in Firewalld
-      firewalld:
-        port: "{{ item }}"
-        state: enabled
-        permanent: yes
-        immediate: yes
-      with_items: "{{ ports }}"
-
+        state: stopped

@@ -4,7 +4,7 @@
   environment:
     http_proxy: "{{http_proxy}}"
     https_proxy: "{{https_proxy}}"
-  tasks:    
+  tasks:   
 
     - name: Generate no_proxy
       shell: |
@@ -13,11 +13,12 @@
         printf -v service '%s,' 10.96.0.{1..253}
         echo "${lan%,},${service%,},${pool%,},127.0.0.1"
       register: no_proxy_value        
-
+ 
+ 
     - name: initialize the cluster
       environment:
         no_proxy: "{{ no_proxy_value }}"
-      shell: kubeadm init --pod-network-cidr=10.244.0.0/16
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address={{lan_master}}
       
     - name: create .kube directory
       become: yes
@@ -37,7 +38,12 @@
     - name: install Pod network
       become: yes
       become_user: esbmc
-      environment:
-        no_proxy: "{{ no_proxy_value }}"
-      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml
+      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml 
       register: result
+
+    - name: taint master as slave
+      become: yes
+      become_user: esbmc
+      shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+      register: result
+      

@@ -1,0 +1,29 @@
+---
+- hosts: kubernete_master
+  become: true
+  environment:
+    http_proxy: "{{http_proxy}}"
+    https_proxy: "{{https_proxy}}"
+  tasks:
+    - name: Ensure epel-release is installed
+      yum:
+        name: epel-release
+        state: present
+        update_cache: yes
+    - name: Ensure openvpn is Installed
+      yum:
+        name: openvpn
+        state: present
+        update_cache: yes
+    
+    - name: Copy cluster.conf file
+      copy:
+        src: "{{ playbook_dir }}/../files/cluster.conf"
+        dest: /etc/openvpn/client/cluster.conf
+
+    - name: Start openvpn service
+      service:
+        name: openvpn-client@cluster
+        enabled: yes
+        state: started
+

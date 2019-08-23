@@ -17,7 +17,7 @@
         description: Official Jenkins Yum Repo
         baseurl: http://pkg.jenkins.io/redhat
         gpgkey: https://jenkins-ci.org/redhat/jenkins-ci.org.key
-        gpgcheck: yes
+        gpgcheck: no
         enabled: yes
     - name: Ensure Jenkins is Installed
       yum :
@@ -29,10 +29,8 @@
         name: jenkins
         enabled: yes
         state: started
-    - name: Open Firewall Port
-      firewalld:
-        zone: public
-        port: 8080/tcp
-        permanent: true
-        state: enabled
-        immediate: true
+    - name: Ensure git is installed
+      yum:
+        name: git
+        update_cache: yes
+        state: present

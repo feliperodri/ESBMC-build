@@ -1,0 +1,55 @@
+---
+- hosts: kubernete_master
+  become: true
+  environment:
+    http_proxy: "{{http_proxy}}"
+    https_proxy: "{{https_proxy}}"
+  tasks:
+
+    - name: Generate certificate-authority-data file
+      become: yes
+      become_user: esbmc
+      args:
+        chdir: /home/esbmc
+      shell: |
+        cat /home/esbmc/.kube/config | grep certificate-authority-data |  sed -e 's/\s*certificate-authority-data: \(.*\)/\1/' | base64 -d > ca.crt
+
+    - name: Generate client-certificate-data file
+      become: yes
+      become_user: esbmc
+      args:
+        chdir: /home/esbmc
+      shell: |
+        cat /home/esbmc/.kube/config | grep client-certificate-data |  sed -e 's/\s*client-certificate-data: \(.*\)/\1/' | base64 -d > client.crt
+
+    - name: Generate client-key-data file
+      become: yes
+      become_user: esbmc
+      args:
+        chdir: /home/esbmc
+      shell: |
+        cat /home/esbmc/.kube/config | grep client-key-data |  sed -e 's/\s*client-key-data: \(.*\)/\1/' | base64 -d > client.key
+
+    - name: Generate certificate file
+      become: yes
+      become_user: esbmc
+      args:
+        chdir: /home/esbmc
+      shell: |
+        openssl  pkcs12 -export -out cert.pfx -inkey client.key -in client.crt -certfile ca.crt -password pass:
+        
+    - name: Copying cert pfx file
+      become: yes
+      become_user: esbmc
+      fetch:
+        src: /home/esbmc/cert.pfx
+        dest: certfiles/cert.pfx
+        flat: yes
+
+    - name: Copying certificate file
+      become: yes
+      become_user: esbmc
+      fetch:
+        src: /home/esbmc/ca.crt
+        dest: certfiles/ca.crt
+        flat: yes

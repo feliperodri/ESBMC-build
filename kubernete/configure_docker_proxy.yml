@@ -23,16 +23,6 @@
         dest: /etc/systemd/system/docker.service.d/https-proxy.conf
       when: https_proxy != ''
 
-    - name: Configure docker adapter rules for Firewalld (1/2)
-      firewalld:
-        zone: trusted
-        interface: docker0
-        permanent: yes
-        state: enabled
-    
-    - name: Configure docker adapter rules for Firewalld (2/2)
-      shell: firewall-cmd --reload
-    
     - name: Daemon reload for docker
       systemd:
         state: restarted

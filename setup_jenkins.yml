@@ -1,2 +1,3 @@
 ---
 - import_playbook: jenkins/start.yml
+- import_playbook: jenkins/get_kubernetes_certificates.yml

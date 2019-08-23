@@ -22,8 +22,8 @@
         printf -v pool '%s,' 10.244.0.{1..253}
         printf -v service '%s,' 10.96.0.{1..253}
         echo "${lan%,},${service%,},${pool%,},127.0.0.1"
-      register: no_proxy_value     
-
+        
+      register: no_proxy_value  
     - name: join cluster
       environment:
         no_proxy: "{{ no_proxy_value }}"
